@@ -23,12 +23,16 @@ try:
     from ai.optimization import EnergyOptimizer
     from ai.recommendations import RecommendationEngine
 except ImportError:
+    # pyrefly: ignore [missing-import]
     from forecasting.load_forecaster import LoadForecaster
+    # pyrefly: ignore [missing-import]
     from forecasting.wind_forecaster import WindForecaster
+    # pyrefly: ignore [missing-import]
     from optimization.energy_optimizer import EnergyOptimizer
+    # pyrefly: ignore [missing-import]
     from recommendations.recommendation_engine import RecommendationEngine
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)    
 
 
 class AIPipeline:
