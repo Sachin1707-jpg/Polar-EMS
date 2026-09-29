@@ -378,7 +378,7 @@ class AIPipeline:
         """
         logger.info("Training load forecasting model")
         
-        if len(training_data) < 1000:
+        if training_data is None or len(training_data) < 1000:
             raise ValueError("Insufficient training data. Need at least 1000 samples.")
         
         # Train model
@@ -423,7 +423,13 @@ class AIPipeline:
             base_load = historical_data['load_kw'].iloc[-1]
         
         # Create timestamps
-        last_timestamp = historical_data['timestamp'].max() if len(historical_data) > 0 else datetime.utcnow()
+        if historical_data is not None and len(historical_data) > 0 and 'timestamp' in historical_data.columns:
+            last_timestamp = pd.to_datetime(historical_data['timestamp'].max())
+        elif historical_data is not None and len(historical_data) > 0 and isinstance(historical_data.index, pd.DatetimeIndex):
+            last_timestamp = pd.to_datetime(historical_data.index.max())
+        else:
+            last_timestamp = datetime.utcnow()
+
         future_timestamps = pd.date_range(
             start=last_timestamp + timedelta(hours=1),
             periods=horizon_hours,
@@ -475,15 +481,15 @@ class AIPipeline:
         Calculate actual metrics from optimization result
         Never fabricates metrics - all calculated from actual optimization
         """
-        if 'schedule' not in optimization_result:
+        if not optimization_result or 'schedule' not in optimization_result or not optimization_result['schedule']:
             return {}
         
         schedule = optimization_result['schedule']
         
-        total_load = sum(step['load_kw'] for step in schedule)
-        total_wind = sum(step['wind_generation_kw'] for step in schedule)
-        total_diesel = sum(step['diesel_generation_kw'] for step in schedule)
-        total_fuel = sum(step['fuel_consumption_liters'] for step in schedule)
+        total_load = sum(step.get('load_kw', 0) for step in schedule)
+        total_wind = sum(step.get('wind_generation_kw', 0) for step in schedule)
+        total_diesel = sum(step.get('diesel_generation_kw', 0) for step in schedule)
+        total_fuel = sum(step.get('fuel_consumption_liters', 0) for step in schedule)
         
         total_generation = total_wind + total_diesel
         
