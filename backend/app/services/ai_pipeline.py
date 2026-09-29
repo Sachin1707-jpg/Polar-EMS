@@ -11,14 +11,22 @@ import pandas as pd
 import numpy as np
 import logging
 
-# Add AI module to path
-AI_PATH = Path(__file__).parent.parent.parent.parent / "ai"
-sys.path.insert(0, str(AI_PATH))
+# Add project root and AI module to path
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
+AI_PATH = PROJECT_ROOT / "ai"
+for p in [str(PROJECT_ROOT), str(AI_PATH)]:
+    if p not in sys.path:
+        sys.path.insert(0, p)
 
-from forecasting.load_forecaster import LoadForecaster
-from forecasting.wind_forecaster import WindForecaster
-from optimization.energy_optimizer import EnergyOptimizer
-from recommendations.recommendation_engine import RecommendationEngine
+try:
+    from ai.forecasting import LoadForecaster, WindForecaster
+    from ai.optimization import EnergyOptimizer
+    from ai.recommendations import RecommendationEngine
+except ImportError:
+    from forecasting.load_forecaster import LoadForecaster
+    from forecasting.wind_forecaster import WindForecaster
+    from optimization.energy_optimizer import EnergyOptimizer
+    from recommendations.recommendation_engine import RecommendationEngine
 
 logger = logging.getLogger(__name__)
 
