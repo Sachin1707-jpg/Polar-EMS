@@ -58,7 +58,7 @@ class DataSimulator:
         Returns:
             DataFrame with weather data
         """
-        timestamps = pd.date_range(start=start_time, periods=hours, freq='H')
+        timestamps = pd.date_range(start=start_time, periods=hours, freq='h')
         
         # Base patterns
         hour_of_day = timestamps.hour
@@ -132,7 +132,7 @@ class DataSimulator:
         Returns:
             DataFrame with load data
         """
-        timestamps = pd.date_range(start=start_time, periods=hours, freq='H')
+        timestamps = pd.date_range(start=start_time, periods=hours, freq='h')
         
         base_load = self.config['base_load_kw']
         peak_load = self.config['peak_load_kw']

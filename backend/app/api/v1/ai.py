@@ -366,7 +366,7 @@ async def get_model_status() -> Dict:
 def _generate_synthetic_historical_load() -> pd.DataFrame:
     """Generate synthetic historical load data for simulation"""
     hours = 168  # 1 week
-    timestamps = pd.date_range(end=datetime.utcnow(), periods=hours, freq='H')
+    timestamps = pd.date_range(end=datetime.utcnow(), periods=hours, freq='h')
     
     data = []
     for ts in timestamps:
@@ -396,7 +396,7 @@ def _generate_synthetic_historical_load() -> pd.DataFrame:
 
 def _generate_synthetic_weather_forecast(hours: int) -> pd.DataFrame:
     """Generate synthetic weather forecast"""
-    timestamps = pd.date_range(start=datetime.utcnow(), periods=hours, freq='H')
+    timestamps = pd.date_range(start=datetime.utcnow(), periods=hours, freq='h')
     
     data = []
     for ts in timestamps:

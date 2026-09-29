@@ -419,7 +419,7 @@ class AIPipeline:
         future_timestamps = pd.date_range(
             start=last_timestamp + timedelta(hours=1),
             periods=horizon_hours,
-            freq='H'
+            freq='h'
         )
         
         forecast_data = []
