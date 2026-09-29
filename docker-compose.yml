@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  # Frontend - React Application
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000
+      - REACT_APP_WS_URL=ws://localhost:8000
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - polar-ems-network
+
+  # Backend - FastAPI Application
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=sqlite:///./data/polar_ems.db
+      - SECRET_KEY=${SECRET_KEY:-dev-secret-key-change-in-production}
+      - DEBUG=true
+      - SIMULATION_MODE=true
+    volumes:
+      - ./backend/app:/app/app
+      - ./data:/app/data
+      - ./logs:/app/logs
+    depends_on:
+      - ai-service
+    restart: unless-stopped
+    networks:
+      - polar-ems-network
+
+  # AI/ML Service
+  ai-service:
+    build:
+      context: ./ai
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8001"
+    environment:
+      - MODEL_PATH=/app/models
+      - DATA_PATH=/app/data
+    volumes:
+      - ./ai:/app
+      - ./data:/app/data
+    restart: unless-stopped
+    networks:
+      - polar-ems-network
+
+  # Redis (for caching and real-time features)
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+    networks:
+      - polar-ems-network
+
+volumes:
+  redis-data:
+  postgres-data:
+
+networks:
+  polar-ems-network:
+    driver: bridge

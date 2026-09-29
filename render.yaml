@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: polar-ems-backend
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: APP_NAME
+        value: POLAR-EMS
+      - key: APP_VERSION
+        value: 1.0.0
+      - key: ENVIRONMENT
+        value: production
+      - key: DEBUG
+        value: "false"
+      - key: SIMULATION_MODE
+        value: "true"
+      - key: DATABASE_URL
+        value: sqlite:///./polar_ems.db
+      - key: SECRET_KEY
+        generateValue: true
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: JWT_ALGORITHM
+        value: HS256
+      - key: JWT_ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "30"
+      - key: LOG_LEVEL
+        value: INFO
+      # Set these manually in Render dashboard after deploy:
+      # API_CORS_ORIGINS  → your Vercel frontend URL (e.g. https://polar-ems.vercel.app)
+      # TWILIO_ACCOUNT_SID
+      # TWILIO_AUTH_TOKEN
+      # TWILIO_PHONE_NUMBER
+      # TWILIO_RECIPIENT_PHONES
